@@ -229,3 +229,74 @@ class OpenAIChatCompletion(LocalChatCompletion):
                 "API key not found. Please set the OPENAI_API_KEY environment variable."
             )
         return key
+
+@register_model("hyperbolic-chat-completions")
+class HyperbolicChatCompletion(LocalChatCompletion):
+    def __init__(
+        self,
+        base_url="https://api.hyperbolic.xyz/v1/chat/completions",
+        tokenizer_backend=None,
+        tokenized_requests=False,
+        **kwargs,
+    ):
+        super().__init__(
+            base_url=base_url,
+            tokenizer_backend=tokenizer_backend,
+            tokenized_requests=tokenized_requests,
+            **kwargs,
+        )
+
+    @cached_property
+    def api_key(self):
+        """Override this property to return the API key for the API request."""
+        key = os.environ.get("HYPERBOLIC_API_KEY", None)
+        if key is None:
+            raise ValueError(
+                "API key not found. Please set the HYPERBOLIC_API_KEY environment variable."
+            )
+        return key
+
+@register_model("reflection-chat-completions")
+class HyperbolicChatCompletion(LocalChatCompletion):
+    def __init__(
+        self,
+        base_url="https://api.hyperbolic.xyz/v1/chat/completions",
+        tokenizer_backend=None,
+        tokenized_requests=False,
+        **kwargs,
+    ):
+        super().__init__(
+            base_url=base_url,
+            tokenizer_backend=tokenizer_backend,
+            tokenized_requests=tokenized_requests,
+            **kwargs,
+        )
+
+    @cached_property
+    def api_key(self):
+        """Override this property to return the API key for the API request."""
+        key = os.environ.get("HYPERBOLIC_API_KEY", None)
+        if key is None:
+            raise ValueError(
+                "API key not found. Please set the HYPERBOLIC_API_KEY environment variable."
+            )
+        return key
+
+    @staticmethod
+    def parse_generations(outputs: Union[Dict, List[Dict]], **kwargs) -> List[str]:
+        res = []
+        if not isinstance(outputs, list):
+            outputs = [outputs]
+        for out in outputs:
+            for choices in out["choices"]:
+                content = choices["message"]["content"]
+                print(f"Raw content: {content}")
+                if "<output>" in content and "</output>" in content:
+                    parsed_content = content.split("<output>")[1].split("</output>")[0].strip()
+                    res.append(parsed_content)
+                    print(f"Parsed content: {parsed_content}")
+                else:
+                    print(f"Warning: <output> tags not found in content")
+                    res.append(content)
+        return res
+
