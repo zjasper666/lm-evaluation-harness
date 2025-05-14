@@ -1,0 +1,30 @@
+tag:
+  - math_word_problems
+  - putnam
+task: putnam_number_theory
+dataset_path: amitayusht/PutnamBench
+process_docs: !function utils.process_docs
+output_type: generate_until
+training_split: train
+test_split: train  # Using train split for both since we're filtering by tags
+doc_to_text: "Problem: {{problem}}\nSolve this Putnam Competition problem step by step.\nAnswer:"
+process_results: !function utils.process_results
+doc_to_target: "{{answer}}"
+filter_by_field:
+  field: tags
+  value: ['number']
+generation_kwargs:
+  until:
+    - "Problem:"
+  do_sample: false
+  temperature: 0
+  max_tokens: 1024
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
+  description: "Putnam Competition number theory problems for evaluating mathematical reasoning."
+dataset_kwargs:
+  trust_remote_code: true

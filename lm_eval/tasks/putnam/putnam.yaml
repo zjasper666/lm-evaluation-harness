@@ -1,0 +1,15 @@
+group: putnam
+task:
+  - putnam_algebra
+  - putnam_analysis
+  - putnam_number_theory
+  - putnam_linear_algebra
+  - putnam_abstract_algebra
+  - putnam_geometry
+aggregate_metric_list:
+  - metric: exact_match
+    aggregation: mean
+    weight_by_size: true
+metadata:
+  version: 1.0
+  description: "Benchmark for evaluating language models on Putnam Competition mathematics problems."
